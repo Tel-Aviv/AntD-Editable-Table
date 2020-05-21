@@ -22,6 +22,15 @@ const EditableTable = (props) => {
         setEditingKey('');
     };    
 
+    const save = (form, id) => {
+        console.log('key', id)
+        form.validateFields((error, row) => {
+            if (error) {
+                return;
+            }
+        })
+    }
+
     const iconStyle = {
         margin: 8,
         fontSize: '100%'
@@ -52,22 +61,26 @@ const EditableTable = (props) => {
                 return (
                     <div>
                         {
-                            // editable ? (
-                            //     <span>
-                            //         <EditableContext.Consumer>
-                            //             {
-                            //                 form => (
-                            //                     <Icon type="check-circle" 
-                            //                         theme="twoTone" twoToneColor="#52c41a" style={iconStyle}
-                            //                         onClick={() => save(form, record.key)}/>
-                            //                 )
-                            //             }
-                            //         </EditableContext.Consumer>    
-                            //     </span>
-                            // ) : (
+                            editable ? (
+                                <span>
+                                    <Popconfirm title="האם ברצונך לבטל את השינויים ?" onConfirm={() => cancel(record.key)}
+                                        className='rtl'>
+                                            <Icon type="close-circle" theme="twoTone" twoToneColor="#eb2f96" style={iconStyle} />                                            
+                                    </Popconfirm>
+                                    <EditableContext.Consumer>
+                                        {
+                                            form => (
+                                                <Icon type="check-circle" 
+                                                    theme="twoTone" twoToneColor="#52c41a" style={iconStyle}
+                                                    onClick={() => save(form, record.key)}/>
+                                            )
+                                        }
+                                    </EditableContext.Consumer>    
+                                </span>
+                            ) : (
                                  <Icon type="edit" theme="twoTone"
                                      onClick={() => edit(record.key)} type="edit" style={iconStyle} />
-                            // )
+                            )
                         }
                     </div>
                 )
@@ -148,9 +161,9 @@ const EditableTable = (props) => {
                                 required: true,
                                 message: `Please Input ${title}!`,
                             }], 
-                            initialValue: (record[dataIndex] && props.inputType === 'time') ?
-                                            moment.utc(record[dataIndex], format) 
-                                            : undefined // (record[dataIndex])                           
+                            initialValue: (record[dataIndex] && props.inputType === 'time' ) ?
+                                    moment.utc(record[dataIndex], format) :
+                                    undefined
                         })(getInput())
                     }
                     </Form.Item>
